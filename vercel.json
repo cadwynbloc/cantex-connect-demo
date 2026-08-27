@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/scan/cn/:path*", "destination": "https://api.cantonnodes.com/:path*" },
+    { "source": "/scan/sv1/:path*", "destination": "https://scan.sv-1.global.canton.network.sync.global/:path*" },
+    { "source": "/scan/sv2/:path*", "destination": "https://scan.sv-2.global.canton.network.digitalasset.com/:path*" },
+    { "source": "/scan/da1/:path*", "destination": "https://scan.sv-1.global.canton.network.digitalasset.com/:path*" },
+    { "source": "/scan/pg1/:path*", "destination": "https://scan.sv-1.global.canton.network.proofgroup.xyz/:path*" },
+    { "source": "/registry/da/:path*", "destination": "https://api.utilities.digitalasset.com/:path*" },
+    { "source": "/cantex/:path*", "destination": "https://api.cantex.io/v1/public/:path*" }
+  ]
+}

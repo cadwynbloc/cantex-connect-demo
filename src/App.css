@@ -1,0 +1,1000 @@
+/*
+  Two themes, one set of names.
+
+  Every rule below reads a variable and never a literal colour, so the light
+  theme is a palette swap rather than a second stylesheet — which is the only
+  way two themes stay in step as the app changes. The brand pink and teal are
+  fixed points; what moves around them is the ground they sit on, and the ink
+  and accent values are re-picked per theme rather than reused, because a colour
+  that reads well glowing on black is usually too pale to read on white.
+*/
+
+:root {
+  --pink: #ff5182;
+  --teal: #00c1c1;
+
+  color-scheme: dark;
+
+  --bg: #06070b;
+  --ink: #f2f4f8;
+  --muted: #8b93a7;
+  /* Solved against the card, not the page — that is the lower-contrast of the
+     two grounds it sits on, and it was failing at 3.2:1. */
+  --faint: #747b8f;
+
+  --accent: var(--teal);
+  --accent-hover: #3ad7d7;
+
+  --card: rgba(255, 255, 255, 0.032);
+  --card-solid: #0d1017;
+  --card-line: rgba(255, 255, 255, 0.085);
+  --card-line-strong: rgba(255, 255, 255, 0.18);
+  --well: rgba(255, 255, 255, 0.028);
+  --well-line: rgba(255, 255, 255, 0.06);
+  --raised: rgba(255, 255, 255, 0.06);
+  --hover: rgba(255, 255, 255, 0.06);
+
+  --ok: #34d8a4;
+  --ok-ink: #b6f3dc;
+  --ok-bg: rgba(52, 216, 164, 0.09);
+  --ok-line: rgba(52, 216, 164, 0.25);
+
+  --warn-ink: #ffdcae;
+  --warn-bg: rgba(255, 180, 84, 0.08);
+  --warn-line: rgba(255, 180, 84, 0.22);
+
+  --bad: #ff6b81;
+  --bad-ink: #ffc2cb;
+  --bad-bg: rgba(255, 107, 129, 0.09);
+  --bad-line: rgba(255, 107, 129, 0.25);
+
+  --btn-ink: #05070c;
+  --shadow-card: 0 30px 60px -34px rgba(0, 0, 0, 0.95);
+  --shadow-pop: 0 24px 48px -20px rgba(0, 0, 0, 0.9);
+  --scrim: rgba(4, 5, 8, 0.72);
+
+  --glow-teal: rgba(0, 193, 193, 0.22);
+  --glow-pink: rgba(255, 81, 130, 0.2);
+  --glow-wash: rgba(96, 120, 175, 0.1);
+  --seam: 0.55;
+
+  --radius: 20px;
+  --radius-sm: 14px;
+}
+
+/*
+  Light. Not the dark theme inverted — the accents are darkened for contrast on
+  white (brand pink at #ff5182 is about 3:1 on white, fine for a heading and not
+  for a link), and the glows are pulled right down, since on a pale ground the
+  same alpha reads as a stain rather than as light.
+*/
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f7f8fb;
+  --ink: #0f1320;
+  --muted: #545d72;
+  --faint: #6c768c;
+
+  --accent: #00807f;
+  --accent-hover: #00615f;
+
+  --card: rgba(255, 255, 255, 0.86);
+  --card-solid: #ffffff;
+  --card-line: rgba(15, 19, 32, 0.1);
+  --card-line-strong: rgba(15, 19, 32, 0.22);
+  --well: rgba(255, 255, 255, 0.75);
+  --well-line: rgba(15, 19, 32, 0.09);
+  --raised: rgba(15, 19, 32, 0.04);
+  --hover: rgba(15, 19, 32, 0.05);
+
+  --ok: #0f9d70;
+  --ok-ink: #0a5f45;
+  --ok-bg: rgba(15, 157, 112, 0.1);
+  --ok-line: rgba(15, 157, 112, 0.3);
+
+  --warn-ink: #8a5200;
+  --warn-bg: rgba(214, 138, 20, 0.12);
+  --warn-line: rgba(214, 138, 20, 0.32);
+
+  --bad: #d1244a;
+  --bad-ink: #8f1230;
+  --bad-bg: rgba(209, 36, 74, 0.08);
+  --bad-line: rgba(209, 36, 74, 0.25);
+
+  /*
+    Dark, not white. The primary button is a pink→teal gradient and text has to
+    clear 4.5:1 at BOTH ends; white manages 3.1:1 on the pink and 2.2:1 on the
+    teal. The brand colours are light enough that dark ink is the only readable
+    choice, in either theme.
+  */
+  --btn-ink: #0b0f18;
+  --shadow-card: 0 24px 48px -30px rgba(15, 19, 32, 0.4);
+  --shadow-pop: 0 20px 40px -18px rgba(15, 19, 32, 0.28);
+  --scrim: rgba(28, 32, 45, 0.42);
+
+  --glow-teal: rgba(0, 193, 193, 0.16);
+  --glow-pink: rgba(255, 81, 130, 0.14);
+  --glow-wash: rgba(120, 140, 190, 0.1);
+  --seam: 0.75;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+  Ambient light, fixed rather than scrolled, so the page feels lit from behind
+  instead of papered with a picture. Two brand-coloured pools plus a cool wash
+  keep the black from going flat.
+*/
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(50vw 42vw at 82% 2%, var(--glow-teal), transparent 60%),
+    radial-gradient(46vw 40vw at 14% 96%, var(--glow-pink), transparent 60%),
+    radial-gradient(70vw 55vw at 50% 45%, var(--glow-wash), transparent 68%);
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 2.5rem, 30rem);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.1rem;
+}
+
+/* --- header --------------------------------------------------------------- */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.25rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.brand img {
+  width: 38px;
+  height: auto;
+  flex: 0 0 auto;
+}
+
+.brand-text {
+  min-width: 0;
+}
+
+.brand-name {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+
+.brand-sub {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--faint);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* --- buttons -------------------------------------------------------------- */
+
+.primary-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.62rem 1.15rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--btn-ink);
+  cursor: pointer;
+  background: linear-gradient(105deg, var(--pink) 0%, var(--teal) 100%);
+  transition: filter 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 6px 20px -10px rgba(255, 81, 130, 0.9),
+    0 6px 20px -10px rgba(0, 193, 193, 0.9);
+}
+
+.primary-btn:hover:not(:disabled) {
+  filter: brightness(1.07);
+  transform: translateY(-1px);
+}
+
+/*
+  Flat and clearly inert rather than a greyed-out gradient: desaturating the
+  brand colours leaves a muddy smear that still reads as a live button, which is
+  the one thing a disabled control must not do.
+*/
+.primary-btn:disabled {
+  cursor: not-allowed;
+  background: var(--raised);
+  color: var(--faint);
+  box-shadow: none;
+  border: 1px solid var(--well-line);
+}
+
+.wide {
+  width: 100%;
+  padding: 0.95rem 1.15rem;
+  font-size: 0.98rem;
+  border-radius: var(--radius-sm);
+}
+
+:where(button, select, input, li):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* --- account chip --------------------------------------------------------- */
+
+.account {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.wallet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--card-line);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.wallet:hover {
+  border-color: var(--card-line-strong);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 10px var(--ok);
+  flex: 0 0 auto;
+}
+
+.caret {
+  color: var(--faint);
+  font-size: 0.7rem;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 20;
+  min-width: 16rem;
+  max-width: min(22rem, calc(100vw - 2.5rem));
+  padding: 0.85rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.4rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-line);
+  background: var(--card-solid);
+  box-shadow: var(--shadow-pop);
+}
+
+.menu-label {
+  margin: 0;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+}
+
+.menu-party {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--muted);
+  word-break: break-all;
+  line-height: 1.45;
+}
+
+.link {
+  justify-self: start;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: var(--accent-hover);
+}
+
+.menu-danger {
+  margin-top: 0.3rem;
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  color: var(--bad);
+  background: var(--bad-bg);
+  border: 1px solid var(--bad-line);
+  border-radius: 10px;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+}
+
+.menu-danger:hover {
+  filter: brightness(0.97);
+}
+
+/* --- card ----------------------------------------------------------------- */
+
+.card {
+  position: relative;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-line);
+  background: var(--card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 1.15rem;
+  display: grid;
+  /*
+    minmax(0, 1fr), not the implicit `auto` column. An auto column is floored at
+    its content's min-content width, and a number input carries an intrinsic
+    ~20-character width — so the panels grew past the card's own edge. This is
+    the fix for grid blowout, and it has to be on every grid that holds text or
+    form controls.
+  */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.55rem;
+  box-shadow: var(--shadow-card);
+}
+
+/* A one-pixel brand seam along the top edge, the only chrome the card gets. */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--pink) calc(var(--seam) * 100%), transparent),
+    color-mix(in srgb, var(--teal) calc(var(--seam) * 100%), transparent),
+    transparent
+  );
+}
+
+/* --- swap legs ------------------------------------------------------------ */
+
+.leg {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--well-line);
+  background: var(--well);
+  padding: 0.85rem 0.95rem;
+  transition: border-color 0.18s ease;
+}
+
+.leg:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.leg > label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+.leg-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.row input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  padding: 0;
+}
+
+.row input::placeholder {
+  color: var(--faint);
+}
+
+.row input:focus {
+  outline: none;
+}
+
+/* Firefox and WebKit both add spinners that fight a large numeric display. */
+.row input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.row input::-webkit-outer-spin-button,
+.row input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.hint {
+  margin: 0.55rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.small {
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--faint);
+  line-height: 1.5;
+}
+
+/* --- flip ----------------------------------------------------------------- */
+
+.flip-rail {
+  position: relative;
+  height: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.flip {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  border: 1px solid var(--card-line);
+  background: var(--card-solid);
+  color: var(--muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.flip:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  transform: rotate(180deg);
+}
+
+.flip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --- quote ---------------------------------------------------------------- */
+
+.quote {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.4rem 1rem;
+  margin: 0.35rem 0 0;
+  padding: 0.85rem 0.95rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--well-line);
+  background: var(--raised);
+  font-size: 0.8rem;
+}
+
+.quote dt {
+  color: var(--faint);
+}
+
+.quote dd {
+  margin: 0;
+  text-align: right;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* --- status --------------------------------------------------------------- */
+
+.alert {
+  margin: 0;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  border: 1px solid transparent;
+  overflow-wrap: anywhere;
+}
+
+.alert-bad {
+  color: var(--bad-ink);
+  background: var(--bad-bg);
+  border-color: var(--bad-line);
+}
+
+.alert-ok {
+  color: var(--ok-ink);
+  background: var(--ok-bg);
+  border-color: var(--ok-line);
+}
+
+.alert-warn {
+  color: var(--warn-ink);
+  background: var(--warn-bg);
+  border-color: var(--warn-line);
+}
+
+.alert-more {
+  margin-top: 0.45rem;
+}
+
+.alert-more summary {
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.75;
+  font-size: 0.74rem;
+}
+
+.alert-more pre {
+  margin: 0.45rem 0 0;
+  padding: 0.6rem;
+  border-radius: 8px;
+  background: var(--raised);
+  font-size: 0.68rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 12rem;
+  overflow: auto;
+}
+
+.watching {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--raised);
+  border: 1px solid var(--well-line);
+}
+
+.spinner {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  border: 2px solid var(--accent);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 3s;
+  }
+  .primary-btn,
+  .flip,
+  .picker-caret {
+    transition: none;
+  }
+  .flip:hover:not(:disabled) {
+    transform: none;
+  }
+  .modal-backdrop,
+  .modal,
+  .modal-mark-ring,
+  .modal-mark-tick {
+    animation: none;
+  }
+  .modal-mark-ring,
+  .modal-mark-tick {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* --- footer --------------------------------------------------------------- */
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem 0.8rem;
+  padding-top: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--faint);
+  text-align: center;
+}
+
+.footer a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--card-line-strong);
+}
+
+.footer a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--card-line);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* --- token picker --------------------------------------------------------- */
+
+.picker {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.picker-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 11rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--well-line);
+  border-radius: 999px;
+  padding: 0.45rem 0.7rem 0.45rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.picker-trigger:hover:not(:disabled) {
+  border-color: var(--card-line-strong);
+}
+
+.picker-trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.picker-symbol {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Drawn rather than typed: a text caret sits on the baseline and looks bolted
+   on next to a pill, and the glyph differs per platform font. */
+.picker-caret {
+  width: 0;
+  height: 0;
+  flex: 0 0 auto;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--muted);
+  transition: transform 0.18s ease;
+}
+
+.picker-trigger[aria-expanded='true'] .picker-caret {
+  transform: rotate(180deg);
+}
+
+.picker-list {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 30;
+  margin: 0;
+  padding: 0.3rem;
+  list-style: none;
+  min-width: 12.5rem;
+  max-height: 15rem;
+  overflow-y: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-line);
+  background: var(--card-solid);
+  box-shadow: var(--shadow-pop);
+}
+
+.picker-option {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 9px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+/* Highlight follows the keyboard as well as the pointer, so arrow keys and the
+   mouse cannot disagree about which row is current. */
+.picker-option.is-active {
+  background: var(--hover);
+}
+
+.picker-option.is-selected .picker-option-symbol {
+  color: var(--accent);
+}
+
+.picker-option.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.picker-option.is-disabled.is-active {
+  background: none;
+}
+
+.picker-option-symbol {
+  font-weight: 600;
+}
+
+.picker-option-balance {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- completion dialog ---------------------------------------------------- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: var(--scrim);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: fade 0.18s ease both;
+}
+
+.modal {
+  position: relative;
+  width: min(100%, 22rem);
+  padding: 1.6rem 1.4rem 1.3rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+  justify-items: center;
+  text-align: center;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-line);
+  background: var(--card-solid);
+  box-shadow: var(--shadow-pop);
+  animation: rise 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.modal::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--pink) calc(var(--seam) * 100%), transparent),
+    color-mix(in srgb, var(--teal) calc(var(--seam) * 100%), transparent),
+    transparent
+  );
+}
+
+.modal-mark {
+  line-height: 0;
+  color: var(--ok);
+}
+
+.modal-mark-ring,
+.modal-mark-tick {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.modal-mark-ring {
+  stroke-width: 2;
+  opacity: 0.35;
+  stroke-dasharray: 151;
+  animation: draw 0.5s ease-out both;
+}
+
+.modal-mark-tick {
+  stroke-width: 3.5;
+  stroke-dasharray: 34;
+  animation: draw 0.35s 0.18s ease-out both;
+}
+
+.modal-title {
+  margin: 0.35rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.modal-amount {
+  margin: 0;
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.modal-amount-symbol {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.modal-sub {
+  margin: 0 0 0.7rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+}
+
+@keyframes draw {
+  from { stroke-dashoffset: 151; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* --- theme toggle --------------------------------------------------------- */
+
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  border: 1px solid var(--card-line);
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--card-line-strong);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex: 0 0 auto;
+}
+
+/* --- pairing (WalletConnect) ---------------------------------------------- */
+
+.pairing {
+  justify-items: center;
+  text-align: center;
+}
+
+.h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* A QR must keep a light quiet zone to stay scannable — this is the one place
+   on the page that is allowed to be white. */
+.qr {
+  line-height: 0;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.6rem;
+  max-width: 100%;
+}
+
+.qr svg {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+}
+
+.centre {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.pair-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media (max-width: 30rem) {
+  .page {
+    padding-top: 1.25rem;
+  }
+  .row input {
+    font-size: 1.35rem;
+  }
+  .brand-name {
+    font-size: 0.95rem;
+  }
+}

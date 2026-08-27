@@ -1,0 +1,61 @@
+# Netlify deployment.
+#
+# The rewrites replicate the Vite dev proxy in production. They are not
+# optional: CantonNodes serves no CORS headers, so a browser cannot call it
+# directly and the proxied path is the only one that works. Without these the
+# app deploys and then reports "no Scan reachable".
+#
+# Rewrites are server-side, so no browser origin is involved and CORS never
+# applies — the same reason the dev proxy works.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/scan/cn/*"
+  to = "https://api.cantonnodes.com/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/scan/sv1/*"
+  to = "https://scan.sv-1.global.canton.network.sync.global/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/scan/sv2/*"
+  to = "https://scan.sv-2.global.canton.network.digitalasset.com/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/scan/da1/*"
+  to = "https://scan.sv-1.global.canton.network.digitalasset.com/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/scan/pg1/*"
+  to = "https://scan.sv-1.global.canton.network.proofgroup.xyz/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/registry/da/*"
+  to = "https://api.utilities.digitalasset.com/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/cantex/*"
+  to = "https://api.cantex.io/v1/public/:splat"
+  status = 200
+  force = true
+
+# SPA fallback — must come last, or it would swallow the rewrites above.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
