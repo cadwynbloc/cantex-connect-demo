@@ -569,8 +569,19 @@ export default function App() {
           is served by Scan; every other token on Cantex's list is served by the
           Registry Utility under a path keyed by its admin party — which is why
           the targets depend on what is being sold rather than being a fixed list.
+
+          registryTargetsFor's Scan/Registry-Utility choice depends entirely on
+          `scan`, which is only ever resolved once, at mount. If that one probe
+          failed transiently, `scan` stays null for the rest of the session —
+          silently routing Canton Coin to the Registry Utility instead, which
+          404s. Retried here rather than merged with the Registry Utility list:
+          asking Scan for a token that is not actually the DSO's can silently
+          return Amulet's own factory instead of failing, so Scan must never be
+          tried for a sell token that resolveScan() has not confirmed is the DSO.
         */
-        const targets = registryTargetsFor(sell.instrument_admin, scan);
+        const resolvedScan = scan ?? (await resolveScan()).scan;
+        if (resolvedScan && resolvedScan !== scan) setScan(resolvedScan);
+        const targets = registryTargetsFor(sell.instrument_admin, resolvedScan);
         const { result, attempts } = await fetchTransferFactory(targets, choiceArguments);
         setFactoryAttempts(attempts);
         if (!result) throw new Error(describeFactoryFailure(attempts));
