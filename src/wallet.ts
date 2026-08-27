@@ -40,6 +40,14 @@ export interface WalletState {
   accounts: Wallet[];
   /** The party the app acts as — the primary account when the wallet marks one. */
   party: string | null;
+  /**
+   * The CIP-0103 `signingProviderId` of that party's account — which wallet
+   * *implementation* is on the other end, independent of transport. Unlike
+   * `providerId` below, this stays meaningful over WalletConnect: WalletConnect's
+   * own providerId is always 'walletconnect' no matter which wallet paired, so
+   * this is what a wallet-specific quirk (see wallets.config.ts) keys off instead.
+   */
+  signingProviderId: string | null;
   error: string | null;
   /**
    * Which adapter carried the connection.
@@ -58,6 +66,7 @@ const EMPTY: WalletState = {
   connecting: false,
   accounts: [],
   party: null,
+  signingProviderId: null,
   error: null,
   providerId: null,
 };
@@ -67,9 +76,17 @@ export function isWalletConnectTransport(providerId: string | null): boolean {
   return providerId === 'walletconnect';
 }
 
-function pickParty(accounts: Wallet[]): string | null {
+function pickAccount(accounts: Wallet[]): Wallet | null {
   if (accounts.length === 0) return null;
-  return (accounts.find((a) => a.primary) ?? accounts[0]).partyId;
+  return accounts.find((a) => a.primary) ?? accounts[0];
+}
+
+function pickParty(accounts: Wallet[]): string | null {
+  return pickAccount(accounts)?.partyId ?? null;
+}
+
+function pickSigningProviderId(accounts: Wallet[]): string | null {
+  return pickAccount(accounts)?.signingProviderId ?? null;
 }
 
 /**
@@ -284,6 +301,7 @@ export function useWallet() {
       connecting: false,
       accounts,
       party: pickParty(accounts),
+      signingProviderId: pickSigningProviderId(accounts),
       error: null,
       providerId,
     }));
@@ -317,6 +335,7 @@ export function useWallet() {
         ...s,
         accounts,
         party: pickParty(accounts),
+        signingProviderId: pickSigningProviderId(accounts),
         isConnected: accounts.length > 0,
       }));
     };

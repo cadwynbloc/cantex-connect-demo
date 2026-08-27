@@ -69,6 +69,37 @@ export const WALLETCONNECT_PROJECT_ID =
  */
 export const WALLETCONNECT_CHAIN_ID = 'canton:da-mainnet';
 
+/**
+ * Per-wallet override for `prepareExecute`'s `packageIdSelectionPreference`.
+ *
+ * Empty array is the default sent for every wallet: no preference, which tells
+ * Canton to resolve TRANSFER_FACTORY_INTERFACE / HOLDING_INTERFACE's package-
+ * *name* references to the latest package version vetted in the topology —
+ * confirmed correct by Send (2026-08-27) after their WalletConnect backend
+ * stopped filling this field in on the dApp's behalf and started requiring it
+ * present in the request.
+ *
+ * Add an entry here only if a specific wallet's participant should instead be
+ * pinned to a particular package version. Matched case-insensitively, as a
+ * substring, against the connected account's `signingProviderId` — not
+ * `providerId`/transport, which over WalletConnect is always 'walletconnect'
+ * regardless of which wallet is on the other end.
+ */
+export const PACKAGE_ID_SELECTION_PREFERENCE: Record<string, string[]> = {
+  // send: ['<packageId>'],
+};
+
+export function packageIdSelectionPreferenceFor(
+  signingProviderId: string | null,
+): string[] {
+  if (!signingProviderId) return [];
+  const haystack = signingProviderId.toLowerCase();
+  const key = Object.keys(PACKAGE_ID_SELECTION_PREFERENCE).find((needle) =>
+    haystack.includes(needle.toLowerCase()),
+  );
+  return key ? PACKAGE_ID_SELECTION_PREFERENCE[key] : [];
+}
+
 export interface PickerEntryLike {
   providerId: string;
   name: string;

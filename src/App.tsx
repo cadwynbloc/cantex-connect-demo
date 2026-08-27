@@ -46,6 +46,7 @@ import {
   type Quote,
 } from './cantex';
 import { detail, headline } from './message';
+import { packageIdSelectionPreferenceFor } from './wallets.config';
 import { Pairing } from './Pairing';
 import { SwapComplete } from './SwapComplete';
 import { TokenPicker, type TokenOption } from './TokenPicker';
@@ -591,6 +592,12 @@ export default function App() {
             synchronizerId: synchronizerIdFrom(factory.choiceContext.disclosedContracts),
             disclosedContracts: toWalletDisclosedContracts(
               factory.choiceContext.disclosedContracts,
+            ),
+            // Always present: an empty array is "no preference" (Canton resolves
+            // package-name references to the latest vetted version), and Send's
+            // WalletConnect backend 400s if the field is absent at all.
+            packageIdSelectionPreference: packageIdSelectionPreferenceFor(
+              wallet.signingProviderId,
             ),
             commands: [
               {
