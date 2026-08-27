@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   describeError,
-  isWalletConnectTransport,
   ledgerApi,
   prepareExecute,
   useWallet,
@@ -642,7 +641,6 @@ export default function App() {
   };
 
   const busy = status.kind === 'busy';
-  const onWalletConnect = isWalletConnectTransport(wallet.providerId);
 
   return (
     <main className="page">
@@ -842,14 +840,6 @@ export default function App() {
         >
           {busy ? status.step : isConnected ? 'Swap' : 'Connect a wallet to swap'}
         </button>
-
-        {onWalletConnect && (
-          <p className="alert alert-warn">
-            Connected over WalletConnect. Quotes and balances work, but submitting
-            fails here on token-standard metadata — the same wallet's browser
-            extension submits the identical transfer. No funds move when it fails.
-          </p>
-        )}
 
         {status.kind === 'error' && (
           <div className="alert alert-bad">
