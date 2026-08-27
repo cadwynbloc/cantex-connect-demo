@@ -23,6 +23,12 @@ npm run build
 npm run preview
 ```
 
+To lint:
+
+```bash
+npm run lint
+```
+
 
 ## Components
 
